@@ -1,0 +1,9 @@
+services:
+  - type: worker
+    name: dessstikbot
+    runtime: python
+    buildCommand: bash build.sh
+    startCommand: python bot.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false

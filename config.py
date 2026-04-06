@@ -8,7 +8,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
     raise ValueError("BOT_TOKEN no está configurado. Crea un archivo .env con BOT_TOKEN=tu_token_aqui")
 
-DOWNLOAD_DIR = "/tmp/bot_videos"
+DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), "bot_videos")
 MAX_FILE_SIZE_MB = 50
 MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 

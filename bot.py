@@ -51,8 +51,8 @@ MSG_HELP = (
 )
 
 MSG_DOWNLOADING = "⏳ Descargando tu video, espera un momento..."
-MSG_SUCCESS_VIDEO = "✅ Aquí está tu video"
-MSG_SUCCESS_AUDIO = "✅ Aquí está el audio en MP3"
+MSG_SUCCESS_VIDEO = "Descargado con: @dessstikbot"
+MSG_SUCCESS_AUDIO = "Descargado con: @dessstikbot"
 MSG_TOO_LARGE = (
     "⚠️ El video es demasiado grande para Telegram (límite 50 MB).\n"
     "Intenta con un video más corto o en menor resolución."

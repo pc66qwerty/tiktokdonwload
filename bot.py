@@ -11,7 +11,7 @@ from telegram.ext import (
     filters,
 )
 
-from config import BOT_TOKEN, logger
+from config import BOT_TOKEN, ALLOWED_USERS, logger
 from downloader import (
     DownloadError,
     FileTooLargeError,
@@ -65,20 +65,41 @@ MSG_GENERAL_ERROR = (
     "❌ No pude descargar ese video.\n"
     "Verifica que el link sea válido y que el video sea público."
 )
+MSG_UNAUTHORIZED = "⛔ No tienes permiso para usar este bot."
+
+# ──────────────────────────────────────────────
+# Autorización
+# ──────────────────────────────────────────────
+
+def is_authorized(update: Update) -> bool:
+    if not ALLOWED_USERS:
+        return True  # Si no hay lista configurada, bot abierto
+    return update.effective_user.id in ALLOWED_USERS
+
 
 # ──────────────────────────────────────────────
 # Handlers
 # ──────────────────────────────────────────────
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_authorized(update):
+        await update.message.reply_text(MSG_UNAUTHORIZED)
+        return
     await update.message.reply_text(MSG_WELCOME, parse_mode="Markdown")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_authorized(update):
+        await update.message.reply_text(MSG_UNAUTHORIZED)
+        return
     await update.message.reply_text(MSG_HELP, parse_mode="Markdown")
 
 
 async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_authorized(update):
+        await update.message.reply_text(MSG_UNAUTHORIZED)
+        return
+
     message = update.message
     url = message.text.strip()
 
@@ -86,7 +107,6 @@ async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         await message.reply_text(MSG_INVALID_LINK)
         return
 
-    # Notify user we're working
     status_msg = await message.reply_text(MSG_DOWNLOADING)
     await context.bot.send_chat_action(chat_id=message.chat_id, action=ChatAction.UPLOAD_VIDEO)
 
@@ -118,7 +138,6 @@ async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         await status_msg.edit_text(MSG_GENERAL_ERROR)
 
     else:
-        # Delete the "Descargando..." message on success
         await status_msg.delete()
 
     finally:
@@ -127,6 +146,9 @@ async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
 
 async def handle_non_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_authorized(update):
+        await update.message.reply_text(MSG_UNAUTHORIZED)
+        return
     await update.message.reply_text(MSG_INVALID_LINK)
 
 
@@ -146,7 +168,6 @@ def main() -> None:
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
 
-    # URLs contain "://" or start with common shorteners
     url_filter = filters.Regex(r"https?://")
     app.add_handler(MessageHandler(filters.TEXT & url_filter, handle_url))
     app.add_handler(MessageHandler(filters.TEXT & ~url_filter, handle_non_url))

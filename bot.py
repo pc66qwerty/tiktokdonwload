@@ -26,14 +26,14 @@ from downloader import (
 # ──────────────────────────────────────────────
 
 MSG_WELCOME = (
-    "👋 *¡Hola! Soy tu bot descargador de videos.*\n\n"
-    "Puedo descargar videos de:\n"
+    "👋 *botcito pa descargar videos.*\n\n"
+    "Solo videos de sin Marca de Agua:\n"
     "• 🎬 YouTube\n"
     "• 🎵 TikTok\n"
     "• 📘 Facebook\n"
     "• 📸 Instagram\n\n"
-    "Solo mándame el link y lo descargo por ti.\n"
-    "Usa /help para ver más información."
+    "Pasa Link pa descargar :/.\n"
+    "Usa /help si necesitas aiuda :V."
 )
 
 MSG_HELP = (
